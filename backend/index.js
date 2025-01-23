@@ -6,6 +6,7 @@ import authRoutes from './routes/authRoutes.js';
 import {connectDB, sequelize} from './config/db.js';
 import * as dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
+import campaignRoutes from "./routes/campaignRoutes.js";
 
 
 dotenv.config();
@@ -34,6 +35,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/api/users', authRoutes);
+app.use('/api/campaigns', campaignRoutes);
 
 
 

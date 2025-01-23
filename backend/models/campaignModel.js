@@ -45,6 +45,7 @@ Campaign.init({
     modelName: 'Campaign',
     timestamps: true,
 });
+Campaign.belongsTo(User, { foreignKey: 'marque_id', as: 'Marque', onDelete: 'CASCADE' });
+User.hasMany(Campaign, { foreignKey: 'marque_id', as: 'campaigns' });
 
-Campaign.belongsTo(User, { foreignKey: 'marque_id', onDelete: 'CASCADE' });
-User.has
+export default Campaign;
