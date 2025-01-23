@@ -1,0 +1,39 @@
+import {DataTypes, Model} from 'sequelize';
+import bcrypt from 'bcryptjs';
+import {sequelize} from '../config/db.js';
+import User from './userModel.js';
+
+class Influencer extends Model {
+}
+
+Influencer.init({
+    reseaux_sociaux: {
+        type: DataTypes.JSON,
+        allowNull: false,
+    },
+    audience: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+    taux_engagement: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+    },
+    localisation: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+
+}, {
+    sequelize,
+    modelName: 'Influencer',
+    timestamps: true,
+});
+
+Influencer.belongsTo(User, {
+    foreignKey: 'user_id',
+    onDelete: 'CASCADE', // Supprime le profil si l'utilisateur est supprimé
+});
+
+
+export default Influencer;

@@ -1,0 +1,53 @@
+import { DataTypes, Model } from 'sequelize';
+import bcrypt from 'bcryptjs';
+import { sequelize } from '../config/db.js';
+
+
+class Campagne extends Model {
+
+}
+
+Campagne.init({
+    title: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    description: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+    },
+    budget: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+    },
+    objectifs: {
+        type: DataTypes.JSON,
+        allowNull: false,
+    },
+    date_debut: {
+        type: DataTypes.DATE,
+        allowNull: false,
+    },
+    objectifs: {
+        type: DataTypes.JSON,
+        allowNull: false,
+    },
+    objectifs: {
+        type: DataTypes.JSON,
+        allowNull: false,
+    },
+    role: DataTypes.ENUM('Marque', 'Influenceur'),
+}, {
+    sequelize,
+    modelName: 'User',
+    timestamps: true,
+    hooks: {
+        beforeSave: async (user) => {
+            if (user.changed('password')) {
+                user.password = await bcrypt.hash(user.password, 10);
+            }
+        },
+    },
+});
+
+export default Campagne;

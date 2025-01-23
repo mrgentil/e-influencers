@@ -1,0 +1,40 @@
+import { DataTypes, Model } from 'sequelize';
+import bcrypt from 'bcryptjs';
+import { sequelize } from '../config/db.js';
+import User from "./userModel";
+import Campaign from "./campaignModel";
+
+
+class Transaction extends Model {
+
+}
+
+Transaction.init({
+    amount: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+        validate: {
+            min: 0, // Empêche les montants négatifs
+        },
+    },
+    statut: {
+        type: DataTypes.ENUM('En attente', 'Effectué', 'Annulé'),
+        allowNull: false,
+        defaultValue: 'En attente', // Définit un statut par défaut
+    },
+
+}, {
+    sequelize,
+    modelName: 'Transaction',
+    timestamps: true,
+    indexes: [
+        { fields: ['campaign_id'] },
+        { fields: ['influencer_id'] },
+    ],
+
+});
+
+Campaign.hasMany(Transaction, { foreignKey: 'campaign_id' });
+User.hasMany(Transaction, { foreignKey: 'influencer_id' });
+
+export default Transaction;
