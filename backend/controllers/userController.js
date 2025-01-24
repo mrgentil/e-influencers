@@ -3,15 +3,15 @@ import generateToken from '../utils/createToken.js';
 import bcrypt from 'bcryptjs';
 import {validationResult} from 'express-validator';
 import jwt from "jsonwebtoken";
-
+import {Op} from 'sequelize';
 // Inscription
 export const register = async (req, res) => {
     try {
-        const {name, email, phone, role, password} = req.body;
+        const {name, email, phone, role, password, niche, followers, engagement_rate} = req.body;
 
-        console.log('Received data:', {name, email, phone, role, password});
+        console.log('Received data:', {name, email, phone, role, password, niche, followers, engagement_rate});
 
-        if (!name || !email || !password || !role || !phone) {
+        if (!name || !email || !password || !role || !phone || !niche || !followers || !engagement_rate) {
             return res.status(400).json({message: 'Veuillez remplir tous les champs obligatoires'});
         }
 
@@ -25,6 +25,9 @@ export const register = async (req, res) => {
             email,
             phone,
             role,
+            niche,
+            followers,
+            engagement_rate,
             password: await bcrypt.hash(password, 10)
         });
 
@@ -110,6 +113,9 @@ export const update = async (req, res) => {
         }
         user.phone = req.body.phone || user.phone;
         user.role = req.body.role || user.role;
+        user.niche = req.body.niche || user.niche;
+        user.followers = req.body.followers || user.followers;
+        user.engagement_rate = req.body.engagement_rate || user.engagement_rate;
 
         const updatedUser = await user.save();
         res.json({
@@ -118,6 +124,9 @@ export const update = async (req, res) => {
             email: updatedUser.email,
             phone: updatedUser.phone,
             role: updatedUser.role,
+            niche: updatedUser.niche,
+            followers: updatedUser.followers,
+            engagement_rate: updatedUser.engagement_rate,
         });
     } else {
         res.status(404);
@@ -131,13 +140,13 @@ export const getUserProfile = async (req, res) => {
         const user = await User.findByPk(req.params.id);
 
         if (!user) {
-            return res.status(404).json({ message: 'Utilisateur non trouvé.' });
+            return res.status(404).json({message: 'Utilisateur non trouvé.'});
         }
 
         res.status(200).json(user);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Erreur serveur lors de la récupération du profil.' });
+        res.status(500).json({message: 'Erreur serveur lors de la récupération du profil.'});
     }
 };
 
@@ -155,5 +164,45 @@ export const deleteUser = async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({error: err.message});
+    }
+};
+
+
+export const searchInfluencers = async (req, res) => {
+    const { niche, followers, engagement_rate } = req.query;
+
+    try {
+        // Construire l'objet de filtre
+        const query = {
+            where: {}
+        };
+
+        // Ajouter des filtres à la requête si les paramètres sont fournis
+        if (niche) {
+            query.where.niche = niche; // Filtrer par niche
+        }
+
+        if (followers) {
+            query.where.followers = {
+                [Op.gte]: followers // Filtrer par nombre de followers (greater than or equal)
+            };
+        }
+
+        if (engagement_rate) {
+            query.where.engagement_rate = {
+                [Op.gte]: engagement_rate // Filtrer par taux d'engagement (greater than or equal)
+            };
+        }
+
+        // Récupérer les utilisateurs qui correspondent aux critères
+        const users = await User.findAll(query);
+
+        res.status(200).json({
+            message: 'Recherche des utilisateurs effectuée avec succès',
+            users
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Erreur serveur lors de la recherche', error });
     }
 };

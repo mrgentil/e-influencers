@@ -7,8 +7,6 @@ import {connectDB, sequelize} from './config/db.js';
 import * as dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import campaignRoutes from "./routes/campaignRoutes.js";
-import matchRoutes from "./routes/matchRoutes.js";
-import {errorHandler} from "./middlewares/errorHandler.js";
 
 
 dotenv.config();
@@ -38,12 +36,6 @@ app.use((req, res, next) => {
 
 app.use('/api/users', authRoutes);
 app.use('/api/campaigns', campaignRoutes);
-
-// Routes
-app.use('/api/matches', matchRoutes);
-
-// Middleware d'erreur
-app.use(errorHandler);
 
 
 

@@ -5,7 +5,7 @@ import {adminOrOwner, protect, restrictTo} from '../middlewares/authMiddleware.j
 const router = express.Router();
 
 // Seules les marques peuvent créer une campagne
-router.post('/create', protect, restrictTo('Marque'), createCampaign);
+router.post('/create', protect, restrictTo('Marque','Admin'), createCampaign);
 // Route pour obtenir toutes les campagnes
 router.get('/', protect, getAllCampaigns);
 

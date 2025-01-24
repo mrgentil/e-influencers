@@ -40,6 +40,28 @@ User.init({
         type: DataTypes.ENUM('Marque', 'Influenceur','Admin'),
         allowNull: false,
     },
+    niche: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        validate: {
+            notEmpty: true,
+        },
+    },
+    followers: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        validate: {
+            min: 0,
+        },
+    },
+    engagement_rate: {
+        type: DataTypes.FLOAT,
+        allowNull: true,
+        validate: {
+            min: 0,
+            max: 100,
+        },
+    },
 }, {
     sequelize,
     modelName: 'User',
