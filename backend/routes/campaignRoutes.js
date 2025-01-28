@@ -1,5 +1,11 @@
 import express from 'express';
-import { createCampaign, getAllCampaigns, getCampaignById, updateCampaign, deleteCampaign } from '../controllers/campaignController.js';
+import {
+    createCampaign,
+    getAllCampaigns,
+    getCampaignById,
+    updateCampaign,
+    deleteCampaign,
+} from '../controllers/campaignController.js';
 import {adminOrOwner, protect, restrictTo} from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
@@ -17,5 +23,6 @@ router.put('/:id', protect, adminOrOwner, updateCampaign);
 
 // Route pour supprimer une campagne
 router.delete('/:id', protect, adminOrOwner, deleteCampaign);
+
 
 export default router;

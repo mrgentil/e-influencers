@@ -3,9 +3,8 @@ import {updatePerformance} from '../services/performanceService.js';
 
 export const createCampaign = async (req, res) => {
     try {
-        const { title, description, budget, objectifs, date_debut, date_fin } = req.body;
+        const {title, description, budget, objectifs, date_debut, date_fin} = req.body;
         const userId = req.user.id;
-
         // Création de la campagne
         const campaign = await Campaign.create({
             title,
@@ -14,23 +13,13 @@ export const createCampaign = async (req, res) => {
             objectifs,
             date_debut,
             date_fin,
-            marque_id: userId,
+            marque_id: userId, // L'utilisateur connecté
         });
 
-        // Création d'une performance initiale pour la campagne
-        await Performance.create({
-            campaign_id: campaign.id,
-            views: 0,
-            clicks: 0,
-            conversions: 0,
-            engagement_rate: 0,
-            revenue_generated: 0,
-        });
-
-        res.status(201).json({ success: true, data: campaign });
+        res.status(201).json({success: true, data: campaign});
     } catch (error) {
         console.error(error);
-        res.status(400).json({ success: false, message: error.message });
+        res.status(400).json({success: false, message: error.message});
     }
 };
 

@@ -2,13 +2,13 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import authRoutes from './routes/userRoutes.js';
-
 import {connectDB, sequelize} from './config/db.js';
 import * as dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import campaignRoutes from "./routes/campaignRoutes.js";
 import matchRoutes from "./routes/matchRoutes.js";
 import {errorHandler} from "./middlewares/errorHandler.js";
+import performanceRoutes from "./routes/performanceRoutes.js";
 
 
 dotenv.config();
@@ -36,15 +36,14 @@ app.use((req, res, next) => {
     next();
 });
 
+// Routes
 app.use('/api/users', authRoutes);
 app.use('/api/campaigns', campaignRoutes);
-
-// Routes
 app.use('/api/matches', matchRoutes);
+app.use('/api/performances', performanceRoutes);
 
 // Middleware d'erreur
 app.use(errorHandler);
-
 
 
 app.use((err, req, res, next) => {

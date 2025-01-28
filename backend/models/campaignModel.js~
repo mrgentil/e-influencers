@@ -1,6 +1,7 @@
 import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../config/db.js';
 import User from './userModel.js';
+import Performance from './performanceModel.js'; // Importez le modèle Performance
 
 class Campaign extends Model {}
 
@@ -46,8 +47,17 @@ Campaign.init({
     timestamps: true,
 });
 
-// Associations différées définies dans un fichier central
+// Définir les associations
 Campaign.belongsTo(User, { foreignKey: 'marque_id', as: 'Marque', onDelete: 'CASCADE' });
 User.hasMany(Campaign, { foreignKey: 'marque_id', as: 'campaigns' });
+
+// Hook pour créer automatiquement une instance de Performance après la création d'une campagne
+Campaign.afterCreate(async (campaign, options) => {
+    try {
+        await Performance.create({ campaign_id: campaign.id });
+    } catch (error) {
+        console.error('Erreur lors de la création de la performance associée :', error.message);
+    }
+});
 
 export default Campaign;
