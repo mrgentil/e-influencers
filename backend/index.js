@@ -9,6 +9,7 @@ import campaignRoutes from "./routes/campaignRoutes.js";
 import matchRoutes from "./routes/matchRoutes.js";
 import {errorHandler} from "./middlewares/errorHandler.js";
 import performanceRoutes from "./routes/performanceRoutes.js";
+import trackingRoutes from "./routes/trackingRoutes.js";
 
 
 dotenv.config();
@@ -41,6 +42,7 @@ app.use('/api/users', authRoutes);
 app.use('/api/campaigns', campaignRoutes);
 app.use('/api/matches', matchRoutes);
 app.use('/api/performances', performanceRoutes);
+app.use('/api/tracking', trackingRoutes);
 
 // Middleware d'erreur
 app.use(errorHandler);

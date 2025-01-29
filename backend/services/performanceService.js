@@ -1,31 +1,27 @@
-// services/performanceService.js
 import Performance from '../models/performanceModel.js';
+import Click from '../models/clickModel.js';
+import Conversion from '../models/conversionModel.js';
 
-// Mettre à jour les métriques de performance d'une campagne
-export const updatePerformance = async (campaignId, updates) => {
-    const performance = await Performance.findOne({ where: { campaign_id: campaignId } });
+/**
+ * Mettre à jour les performances d'une campagne
+ */
+export const updatePerformance = async (campaignId) => {
+    try {
+        const clicks = await Click.count({ where: { campaign_id: campaignId } });
+        const conversions = await Conversion.count({ where: { campaign_id: campaignId } });
 
-    if (!performance) {
-        // Si aucune performance n'est trouvée, on la crée
-        return Performance.create({
-            campaign_id: campaignId,
-            views: updates.views || 0,
-            clicks: updates.clicks || 0,
-            conversions: updates.conversions || 0,
-        });
-    }
+        // Calcul du taux d'engagement
+        const engagementRate = clicks > 0 ? (conversions / clicks) * 100 : 0;
 
-    // Mise à jour des métriques existantes
-    if (updates.views) {
-        performance.views += updates.views;
-    }
-    if (updates.clicks) {
-        performance.clicks += updates.clicks;
-    }
-    if (updates.conversions) {
-        performance.conversions += updates.conversions;
-    }
+        // Mise à jour des performances
+        const updatedPerformance = await Performance.update(
+            { clicks, conversions, engagement_rate: engagementRate },
+            { where: { campaign_id: campaignId } }
+        );
 
-    await performance.save();
-    return performance;
+        return updatedPerformance;
+    } catch (error) {
+        console.error('Erreur lors de la mise à jour des performances :', error);
+        throw error;
+    }
 };
